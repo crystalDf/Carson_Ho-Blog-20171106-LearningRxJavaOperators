@@ -9,6 +9,8 @@ import java.util.concurrent.TimeUnit;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.BiFunction;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -203,6 +205,72 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onComplete() {
                         Log.d(TAG, "对Complete事件作出响应");
+                    }
+                });
+
+        Observable integerObservable =
+                Observable
+                        .create(emitter -> {
+                            Log.d(TAG, "被观察者1发送了事件1");
+                            emitter.onNext(1);
+                            Thread.sleep(1000);
+
+                            Log.d(TAG, "被观察者1发送了事件2");
+                            emitter.onNext(2);
+                            Thread.sleep(1000);
+
+                            Log.d(TAG, "被观察者1发送了事件3");
+                            emitter.onNext(3);
+                            Thread.sleep(1000);
+
+//                            emitter.onComplete();
+                        }).subscribeOn(Schedulers.io());
+
+        Observable stringObservable =
+                Observable
+                        .create(emitter -> {
+                            Log.d(TAG, "被观察者2发送了事件A");
+                            emitter.onNext("A");
+                            Thread.sleep(1000);
+
+                            Log.d(TAG, "被观察者2发送了事件B");
+                            emitter.onNext("B");
+                            Thread.sleep(1000);
+
+                            Log.d(TAG, "被观察者2发送了事件C");
+                            emitter.onNext("C");
+                            Thread.sleep(1000);
+
+                            Log.d(TAG, "被观察者2发送了事件D");
+                            emitter.onNext("D");
+                            Thread.sleep(1000);
+
+//                            emitter.onComplete();
+                        }).subscribeOn(Schedulers.io());
+
+        Observable
+                .zip(integerObservable, stringObservable,
+                        (BiFunction<Integer, String, String>) (integer, string)
+                                -> integer + string)
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.d(TAG, "开始采用subscribe连接: zip");
+                    }
+
+                    @Override
+                    public void onNext(String string) {
+                        Log.d(TAG, "最终接收到的事件 =  " + string);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d(TAG, "对Error事件作出响应");
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "对Complete事件作出响应: zip");
                     }
                 });
     }
