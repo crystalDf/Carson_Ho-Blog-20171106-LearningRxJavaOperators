@@ -4,11 +4,10 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import java.util.ArrayList;
+
 import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.BiFunction;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.functions.BiConsumer;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -206,92 +205,118 @@ public class MainActivity extends AppCompatActivity {
 //                    }
 //                });
 //
-        Observable integerObservable =
-                Observable
-                        .create(emitter -> {
-
-                            try {
-                                Log.d(TAG, Thread.currentThread().getName());
-
-                                Log.d(TAG, "被观察者1发送了事件1");
-                                emitter.onNext(1);
-                                Thread.sleep(1000);
-
-                                Log.d(TAG, "被观察者1发送了事件2");
-                                emitter.onNext(2);
-                                Thread.sleep(1000);
-
-                                Log.d(TAG, "被观察者1发送了事件3");
-                                emitter.onNext(3);
-                                Thread.sleep(1000);
-
-//                                Log.d(TAG, "被观察者1发送了事件4");
-//                                emitter.onNext(4);
+//        Observable integerObservable =
+//                Observable
+//                        .create(emitter -> {
+//
+//                            try {
+//                                Log.d(TAG, Thread.currentThread().getName());
+//
+//                                Log.d(TAG, "被观察者1发送了事件1");
+//                                emitter.onNext(1);
 //                                Thread.sleep(1000);
-
-                                Log.d(TAG, "被观察者1发送了complete");
-                                emitter.onComplete();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-
-                        }).subscribeOn(Schedulers.io());
-
-        Observable stringObservable =
-                Observable
-                        .create(emitter -> {
-
-                            try {
-                                Log.d(TAG, Thread.currentThread().getName());
-
-                                Log.d(TAG, "被观察者2发送了事件A");
-                                emitter.onNext("A");
-                                Thread.sleep(1000);
-
-                                Log.d(TAG, "被观察者2发送了事件B");
-                                emitter.onNext("B");
-                                Thread.sleep(1000);
-
-                                Log.d(TAG, "被观察者2发送了事件C");
-                                emitter.onNext("C");
-                                Thread.sleep(1000);
-
-                                Log.d(TAG, "被观察者2发送了事件D");
-                                emitter.onNext("D");
-                                Thread.sleep(1000);
-
-                                Log.d(TAG, "被观察者2发送了complete");
-                                emitter.onComplete();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-
-                        }).subscribeOn(Schedulers.io());
+//
+//                                Log.d(TAG, "被观察者1发送了事件2");
+//                                emitter.onNext(2);
+//                                Thread.sleep(1000);
+//
+//                                Log.d(TAG, "被观察者1发送了事件3");
+//                                emitter.onNext(3);
+//                                Thread.sleep(1000);
+//
+////                                Log.d(TAG, "被观察者1发送了事件4");
+////                                emitter.onNext(4);
+////                                Thread.sleep(1000);
+//
+//                                Log.d(TAG, "被观察者1发送了complete");
+//                                emitter.onComplete();
+//                            } catch (InterruptedException e) {
+//                                e.printStackTrace();
+//                            }
+//
+//                        }).subscribeOn(Schedulers.io());
+//
+//        Observable stringObservable =
+//                Observable
+//                        .create(emitter -> {
+//
+//                            try {
+//                                Log.d(TAG, Thread.currentThread().getName());
+//
+//                                Log.d(TAG, "被观察者2发送了事件A");
+//                                emitter.onNext("A");
+//                                Thread.sleep(1000);
+//
+//                                Log.d(TAG, "被观察者2发送了事件B");
+//                                emitter.onNext("B");
+//                                Thread.sleep(1000);
+//
+//                                Log.d(TAG, "被观察者2发送了事件C");
+//                                emitter.onNext("C");
+//                                Thread.sleep(1000);
+//
+//                                Log.d(TAG, "被观察者2发送了事件D");
+//                                emitter.onNext("D");
+//                                Thread.sleep(1000);
+//
+//                                Log.d(TAG, "被观察者2发送了complete");
+//                                emitter.onComplete();
+//                            } catch (InterruptedException e) {
+//                                e.printStackTrace();
+//                            }
+//
+//                        }).subscribeOn(Schedulers.io());
+//
+//        Observable
+//                .zip(integerObservable, stringObservable,
+//                        (BiFunction<Integer, String, String>) (integer, string)
+//                                -> integer + string)
+//                .subscribe(new Observer<String>() {
+//                    @Override
+//                    public void onSubscribe(Disposable d) {
+//                        Log.d(TAG, "开始采用subscribe连接: zip");
+//                    }
+//
+//                    @Override
+//                    public void onNext(String string) {
+//                        Log.d(TAG, "最终接收到的事件 =  " + string);
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//                        Log.d(TAG, "对Error事件作出响应");
+//                    }
+//
+//                    @Override
+//                    public void onComplete() {
+//                        Log.d(TAG, "对Complete事件作出响应: zip");
+//                    }
+//                });
+//
+//        Observable
+//                .combineLatest(
+//                        Observable.just(1L, 2L, 3L),
+//                        Observable.intervalRange(0, 3,
+//                                1, 1, TimeUnit.SECONDS),
+//                        (aLong, aLong2) -> {
+//                            Log.d(TAG, "合并的数据是: " + aLong + " " + aLong2);
+//                            return aLong + aLong2;
+//                        })
+//                .subscribe(aLong -> Log.d(TAG, "合并的结果是: " + aLong));
+//
+//        Observable
+//                .just(1, 2, 3, 4)
+//                .reduce((integer, integer2) -> {
+//                    Log.d(TAG, "本次计算的数据是: " + integer + " 乘 " + integer2);
+//                    return integer * integer2;
+//                })
+//                .subscribe(integer -> Log.d(TAG, "最终计算的结果是: " + integer));
 
         Observable
-                .zip(integerObservable, stringObservable,
-                        (BiFunction<Integer, String, String>) (integer, string)
-                                -> integer + string)
-                .subscribe(new Observer<String>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        Log.d(TAG, "开始采用subscribe连接: zip");
-                    }
-
-                    @Override
-                    public void onNext(String string) {
-                        Log.d(TAG, "最终接收到的事件 =  " + string);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.d(TAG, "对Error事件作出响应");
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.d(TAG, "对Complete事件作出响应: zip");
-                    }
-                });
+                .just(1, 2, 3, 4, 5, 6)
+                .collect(
+                        ArrayList::new,
+                        (BiConsumer<ArrayList<Integer>, Integer>) ArrayList::add)
+                .subscribe(integers -> Log.d(TAG, "本次发送的数据是: " + integers));
     }
 }
