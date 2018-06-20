@@ -221,9 +221,9 @@ public class MainActivity extends AppCompatActivity {
 //                                emitter.onNext(3);
 //                                Thread.sleep(1000);
 //
-////                                Log.d(TAG, "被观察者1发送了事件4");
-////                                emitter.onNext(4);
-////                                Thread.sleep(1000);
+//                                Log.d(TAG, "被观察者1发送了事件4");
+//                                emitter.onNext(4);
+//                                Thread.sleep(1000);
 //
 //                                Log.d(TAG, "被观察者1发送了complete");
 //                                emitter.onComplete();
@@ -276,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
 //
 //                    @Override
 //                    public void onNext(String string) {
-//                        Log.d(TAG, "最终接收到的事件 =  " + string);
+//                        Log.d(TAG, "最终接收到的事件 = " + string);
 //                    }
 //
 //                    @Override
@@ -342,7 +342,7 @@ public class MainActivity extends AppCompatActivity {
 //                        Log.d(TAG, "对Complete事件作出响应");
 //                    }
 //                });
-
+//
         Observable
                 .just(1, 2, 3, 4)
                 .count()
